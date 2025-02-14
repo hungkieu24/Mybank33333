@@ -122,32 +122,30 @@ public class FAQDAO extends DBContext {
         return typeSet;
     }
 
-    
     public FAQ getFAQByID(int id) {
-    FAQ faq = null;
-    String sql = "SELECT * FROM FAQ WHERE faqID = ?";
+        FAQ faq = null;
+        String sql = "SELECT * FROM FAQ WHERE faqID = ?";
 
-  
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, id); // Thiết lập giá trị cho tham số id
 
-    try {
-        PreparedStatement st = connection.prepareStatement(sql);
-        st.setInt(1, id); // Thiết lập giá trị cho tham số id
+            ResultSet rs = st.executeQuery();
 
-        ResultSet rs = st.executeQuery();
-
-        if (rs.next()) {
-            faq = new FAQ();
-            faq.setFaqID(rs.getInt("faqID"));
-            faq.setType(rs.getString("type"));
-            faq.setQuestion(rs.getString("question"));
-            faq.setAnswer(rs.getString("answer"));
+            if (rs.next()) {
+                faq = new FAQ();
+                faq.setFaqID(rs.getInt("faqID"));
+                faq.setType(rs.getString("type"));
+                faq.setQuestion(rs.getString("question"));
+                faq.setAnswer(rs.getString("answer"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+        return faq;
     }
 
-    return faq;
-}
     // Add an FAQ
     public void addFAQ(FAQ faqToAdd) {
         String sql = "INSERT INTO [FAQ](type, question, answer) VALUES (?, ?, ?)";
@@ -162,38 +160,67 @@ public class FAQDAO extends DBContext {
             System.out.println(e);
         }
     }
-   
-    
-    // Update an FAQ
-public void updateFAQ(FAQ faqToUpdate) {
-    String sql = "UPDATE [FAQ] SET type = ?, question = ?, answer = ? WHERE faqID = ?";
 
-    try {
-        PreparedStatement st = connection.prepareStatement(sql);
-        st.setString(1, faqToUpdate.getType());
-        st.setString(2, faqToUpdate.getQuestion());
-        st.setString(3, faqToUpdate.getAnswer());
-        st.setInt(4, faqToUpdate.getFaqID()); // Giả sử FAQ có một trường id để xác định
-        st.executeUpdate();
-    } catch (SQLException e) {
-        System.out.println(e);
+    public boolean addFAQBoolean(FAQ faqToAdd) {
+        String sql = "INSERT INTO [FAQ](type, question, answer) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, faqToAdd.getType());
+            st.setString(2, faqToAdd.getQuestion());
+            st.setString(3, faqToAdd.getAnswer());
+
+            int rowsInserted = st.executeUpdate(); // Trả về số dòng bị ảnh hưởng
+            return rowsInserted > 0; // Nếu > 0, nghĩa là thêm thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Nếu có lỗi, trả về false
     }
-}
-   
-    
-    
- 
-    
-    public static void main(String[] args) { 
+
+    // Update an FAQ
+    public void updateFAQ(FAQ faqToUpdate) {
+        String sql = "UPDATE [FAQ] SET type = ?, question = ?, answer = ? WHERE faqID = ?";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, faqToUpdate.getType());
+            st.setString(2, faqToUpdate.getQuestion());
+            st.setString(3, faqToUpdate.getAnswer());
+            st.setInt(4, faqToUpdate.getFaqID()); // Giả sử FAQ có một trường id để xác định
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    // Update an FAQ
+    public boolean updateFAQBoolean(FAQ faqToUpdate) {
+        String sql = "UPDATE [FAQ] SET type = ?, question = ?, answer = ? WHERE faqID = ?";
+
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, faqToUpdate.getType());
+            st.setString(2, faqToUpdate.getQuestion());
+            st.setString(3, faqToUpdate.getAnswer());
+            st.setInt(4, faqToUpdate.getFaqID());
+
+            int rowsUpdated = st.executeUpdate(); // Trả về số dòng bị ảnh hưởng
+            return rowsUpdated > 0; // Nếu > 0, nghĩa là update thành công
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi cập nhật FAQ: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
         FAQDAO fdao = new FAQDAO();
-        
-         FAQ newFAQ = fdao.getFAQByID(23);
+
+        FAQ newFAQ = fdao.getFAQByID(23);
         newFAQ.setType("card");
         newFAQ.setQuestion("tôi muốn mua thẻ giá rẻ nhưng sdcadsd");
         newFAQ.setAnswer("không có cái nịt ");
- 
+
         fdao.updateFAQ(newFAQ);
-         
+
         System.out.println(newFAQ);
     }
 

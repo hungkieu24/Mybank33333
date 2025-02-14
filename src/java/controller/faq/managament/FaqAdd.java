@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.Set;
 import model.FAQ;
 
@@ -88,13 +89,16 @@ public class FaqAdd extends HttpServlet {
 
         // Thêm FAQ vào cơ sở dữ liệu
         FAQDAO faqDao= new FAQDAO();
-        faqDao.addFAQ(newFAQ);
+        boolean isAdded = faqDao.addFAQBoolean(newFAQ);
+        HttpSession session = request.getSession();
+        if (isAdded) {
+            session.setAttribute("message", "FAQ added successfully!");
+        } else {
+            session.setAttribute("message", "Failed to add FAQ. Please try again.");
+        }
 
         // Chuyển hướng người dùng về trang quản lý FAQ
         response.sendRedirect("/timibank/seller/faq-management");
-        
-        
-        
          
     }
     

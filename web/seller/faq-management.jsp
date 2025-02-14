@@ -535,10 +535,10 @@
     </head>
     <body>
 
-        <c:if test="${not empty requestScope.message}">
+        <c:if test="${not empty sessionScope.message}">
             <div id="toastMessage" class="toast-message">
                 <i class="fa fa-check-circle"></i>
-                ${requestScope.message}
+                ${sessionScope.message}
             </div>
         </c:if>
 

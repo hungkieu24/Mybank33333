@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.Set;
 import model.FAQ;
 
@@ -91,13 +92,21 @@ public class FaqUpdate extends HttpServlet {
         String type = request.getParameter("type");
         String question = request.getParameter("question");
         String answer = request.getParameter("answer");
-       FAQDAO faqDao = new FAQDAO();
-        FAQ faqToUpdate = faqDao.getFAQByID(faqID);        
+        FAQDAO faqDao = new FAQDAO();
+        FAQ faqToUpdate = faqDao.getFAQByID(faqID);
         faqToUpdate.setType(type);
         faqToUpdate.setQuestion(question);
         faqToUpdate.setAnswer(answer);
-        
+
         faqDao.updateFAQ(faqToUpdate);
+        // Update FAQ vào cơ sở dữ liệu
+        boolean isUpdated = faqDao.updateFAQBoolean(faqToUpdate);
+        HttpSession session = request.getSession();
+        if (isUpdated) {
+            session.setAttribute("message", "FAQ Updated successfully!");
+        } else {
+            session.setAttribute("message", "Failed to Update FAQ. Please try again.");
+        }
         response.sendRedirect("/timibank/seller/faq-management");
     }
 

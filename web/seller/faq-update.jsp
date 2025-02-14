@@ -60,13 +60,6 @@
                 margin-bottom: 20px;
             }
 
-            .form-group label {
-                display: block;
-                margin-bottom: 8px;
-                color: #333;
-                font-weight: 500;
-            }
-
             .form-control {
                 width: 100%;
                 padding: 10px 15px;
@@ -75,7 +68,23 @@
                 font-size: 14px;
                 transition: border-color 0.3s ease;
             }
+            
+            .form-control__textarea {
+                font-family: 'Arial', sans-serif;
+                line-height: 1.6;
+                resize: none;
+                min-height: 200px;
+                overflow-y: auto;
+            }
 
+            .form-group__label {
+                display: inline-block;
+                font-weight: bold;
+                margin-right: 10px;
+                margin-left: 5px;
+                margin-bottom: 10px;
+            }
+            
             .form-control:focus {
                 border-color: #4caf50;
                 outline: none;
@@ -156,16 +165,17 @@
     </head>
     <body>
         <div class="container">
-            <form action="faq-update" method="post" class="update-form" onsubmit="return prepareSubmit()">
+            <form action="faq-update" method="post" class="update-form">
                 <div class="form-header">
                     <h1 class="form-title">Update FAQ</h1>
                 </div>
-                <div class="form-group">
+                <div>
                     <input type="hidden" name="FaqID" value="${requestScope.faqToUpdate.getFaqID()}">
+                    <span class="form-group__label">ID:</span>
                     ${requestScope.faqToUpdate.getFaqID()}
                 </div>
                 <div class="form-group">
-                    <label for="type">Type</label>
+                    <label for="type" class="form-group__label">Type</label>
                     <select id="type" name="type" class="form-control" required>
                         <option value="">-- Select Type --</option>
                         <c:forEach items="${listType}" var="type">
@@ -174,16 +184,15 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="question">Question</label>
+                    <label for="question" class="form-group__label">Question</label>
                     <input type="text" id="question" name="question" value="${requestScope.faqToUpdate.getQuestion()}" 
                            class="form-control" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="answer">Answer</label>
-                    <textarea id="answer" name="answer" class="form-control" required>
-                        ${requestScope.faqToUpdate.getAnswer()}
-                    </textarea>
+                    <label for="answer" class="form-group__label">Answer</label>
+                    <textarea id="answer" name="answer" class="form-control form-control__textarea" required><c:out value="${requestScope.faqToUpdate.getAnswer()}" /></textarea>
+
                 </div>
 
                 <div class="button-group">
@@ -192,65 +201,5 @@
                 </div>
             </form>
         </div>
-
-        <script>
-            // Initialize CKEditor
-            var editor = CKEDITOR.replace('description', {
-                height: 300,
-                removeButtons: 'Image',
-                enterMode: CKEDITOR.ENTER_BR,
-                shiftEnterMode: CKEDITOR.ENTER_P,
-                autoParagraph: false,
-                fillEmptyBlocks: false,
-                removePlugins: 'div,autolink',
-                toolbar: [
-                    {name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike']},
-                    {name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote']},
-                    {name: 'links', items: ['Link', 'Unlink']},
-                    {name: 'styles', items: ['Format', 'Font', 'FontSize']},
-                    {name: 'colors', items: ['TextColor', 'BGColor']},
-                    {name: 'tools', items: ['Maximize']}
-                ]
-            });
-
-            // Function to update image preview
-            function updateImagePreview(url) {
-                const preview = document.getElementById('imagePreview');
-                preview.src = url;
-            }
-
-            function prepareSubmit() {
-                // Get CKEditor content
-                var content = CKEDITOR.instances.description.getData();
-
-                // Remove all HTML tags except allowed formatting
-                content = content.replace(/<p[^>]*>/gi, '')
-                        .replace(/<\/p>/gi, '<br>')
-                        .replace(/<div[^>]*>/gi, '')
-                        .replace(/<\/div>/gi, '<br>')
-                        .replace(/[\n\r]+/g, '')
-                        .replace(/(<br\s*\/?>\s*)+$/g, ''); // Remove trailing <br>
-
-                // Clean up any extra spaces and line breaks
-                content = content.trim();
-
-                // Update both the original textarea and our hidden input
-                CKEDITOR.instances.description.setData(content);
-                document.getElementById('description').value = content;
-                document.getElementById('cleanDescription').value = content;
-
-                return true;
-            }
-
-            // Clean initial content
-            window.onload = function () {
-                var initialContent = CKEDITOR.instances.description.getData();
-                initialContent = initialContent.replace(/<p[^>]*>/gi, '')
-                        .replace(/<\/p>/gi, '<br>')
-                        .replace(/[\n\r]+/g, '')
-                        .trim();
-                CKEDITOR.instances.description.setData(initialContent);
-            };
-        </script>
     </body>
 </html>

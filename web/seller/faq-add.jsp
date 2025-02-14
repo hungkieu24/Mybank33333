@@ -61,6 +61,14 @@
                 color: #333;
                 font-weight: 500;
             }
+            
+            .form-control__textarea {
+                font-family: 'Arial', sans-serif;
+                line-height: 1.6;
+                resize: none;
+                min-height: 200px;
+                overflow-y: auto;
+            }
 
             .form-control {
                 width: 100%;
@@ -175,8 +183,7 @@
 
                 <div class="form-group">
                     <label for="description">Answer</label>
-                    <textarea id="description" name="answer" class="form-control" required>
-                    </textarea>
+                    <textarea id="description" name="answer" class="form-control form-control__textarea" required></textarea>
                     <input type="hidden" id="cleanDescription" name="answer">
                 </div>
 
