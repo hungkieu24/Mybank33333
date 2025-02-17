@@ -98,7 +98,6 @@ public class FaqUpdate extends HttpServlet {
         faqToUpdate.setQuestion(question);
         faqToUpdate.setAnswer(answer);
 
-        faqDao.updateFAQ(faqToUpdate);
         // Update FAQ vào cơ sở dữ liệu
         boolean isUpdated = faqDao.updateFAQBoolean(faqToUpdate);
         HttpSession session = request.getSession();

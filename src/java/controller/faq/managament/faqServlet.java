@@ -62,10 +62,8 @@ public class faqServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         FAQDAO faqDao = new FAQDAO();
-        Set<String> listType = faqDao.getFAQType();
         Map<String, List<FAQ>> faqMap = faqDao.getAllFAQsByType(); // Lấy toàn bộ câu hỏi theo type
 
-        request.setAttribute("listType", listType);
         request.setAttribute("faqMap", faqMap); // Truyền map xuống JSP
         request.getRequestDispatcher("faq.jsp").forward(request, response);
           
